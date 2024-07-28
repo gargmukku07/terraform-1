@@ -35,7 +35,21 @@ pipeline {
 
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply'
+                script {
+                    def user_input = input(
+                        id: 'Tf_action', message: 'Please select Apply or Destroy', parameters: [
+                            choice(choices: ['apply', 'destroy'], name: 'ACTION')
+                            ]
+                    )
+                    withCredentials([usernamePassword(credentialsId: 'mycred', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY')]) {
+                        sh """
+                            echo $user_input
+                            terraform $user_input --auto-approve
+
+                        """
+                    }
+                }
+                
             }
         }
     }
