@@ -7,6 +7,10 @@ variable "region" {
 variable "bucket_name" {
   type = string
   description = "this is my bucket name"
+  validation {
+    condition = length(var.bucket_name) <= 10
+    error_message = "The repository name must be less than or equal to 100 characters."
+  }
 }
 
 variable "env" {
